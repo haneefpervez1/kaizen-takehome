@@ -1,5 +1,6 @@
 import { formatCents } from "@/lib/formatters";
 import { Vehicle } from "@/server/data";
+import { PriceBreakdown } from "@/server/discounts";
 import { useBase64Image } from "@/util/useBase64Image";
 import Link from "next/link";
 import { Button } from "@/components/shared/ui/button";
@@ -7,10 +8,12 @@ import { Card, CardTitle } from "@/components/shared/ui/card";
 
 export function VehicleListItem({
   vehicle,
+  priceBreakdown,
   startDateTime,
   endDateTime,
 }: {
   vehicle: Vehicle;
+  priceBreakdown: PriceBreakdown;
   startDateTime: Date;
   endDateTime: Date;
 }) {
@@ -54,10 +57,32 @@ export function VehicleListItem({
         </dl>
       </div>
       <div className="md:ml-auto text-center md:text-right flex flex-col justify-center mt-4 md:mt-0">
-        <p className="text-xl font-bold">
-          {formatCents(vehicle.hourly_rate_cents)}
-          <span className="text-sm text-gray-700 font-normal ml-0.5">/hr</span>
-        </p>
+        {priceBreakdown.discount?.kind === "long_rental" ? (
+          <>
+            <p className="text-xl font-bold">
+              {formatCents(priceBreakdown.discount.discountedHourlyRateCents)}
+              <span className="text-sm text-gray-700 font-normal ml-0.5">/hr</span>
+            </p>
+            <p className="text-sm text-gray-500 line-through">
+              {formatCents(vehicle.hourly_rate_cents)}/hr
+            </p>
+            <p className="text-xs text-green-700 font-medium mt-1">
+              {formatCents(priceBreakdown.discount.hourlyOffCents)}/hr off (long rental)
+            </p>
+          </>
+        ) : (
+          <>
+            <p className="text-xl font-bold">
+              {formatCents(vehicle.hourly_rate_cents)}
+              <span className="text-sm text-gray-700 font-normal ml-0.5">/hr</span>
+            </p>
+            {priceBreakdown.discount?.kind === "holiday" && (
+              <p className="text-xs text-green-700 font-medium mt-1">
+                17% off at checkout (holiday)
+              </p>
+            )}
+          </>
+        )}
         <Button asChild className="mt-2 w-full sm:w-auto">
           <Link href={`/review?${bookNowParams.toString()}`}>
             Book now

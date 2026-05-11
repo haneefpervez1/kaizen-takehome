@@ -1,4 +1,5 @@
 import "./index.css";
+import { SearchStateProvider } from "@/components/search/SearchStateContext";
 
 export default function RootLayout({
   children,
@@ -7,7 +8,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <SearchStateProvider>{children}</SearchStateProvider>
+      </body>
     </html>
   );
 }

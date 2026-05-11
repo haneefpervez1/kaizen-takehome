@@ -2,6 +2,7 @@
 
 import { AdditionalFilters } from "@/components/search/AdditionalFilters.tsx";
 import { FormValues } from "@/components/search/form.tsx";
+import { useSearchState } from "@/components/search/SearchStateContext";
 import { TimeRangeFilters } from "@/components/search/TimeRangeFilters.tsx";
 import { VehicleList } from "@/components/search/VehicleList.tsx";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
@@ -11,11 +12,13 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/shared/ui/sheet"
 import { roundToNearest30Minutes } from "@/lib/times.ts";
 import { API } from "@/server/api";
 import { addDays, addHours, format } from "date-fns";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { useForm } from "react-hook-form";
 
 export function SearchPage() {
+  const { getStoredValues, setStoredValues } = useSearchState();
+
   const [initialStartDateAndTime] = useState(() =>
     roundToNearest30Minutes(addHours(new Date(), 1)),
   );
@@ -26,19 +29,28 @@ export function SearchPage() {
 
   const filterOptions = API.getFilterOptions();
 
-  // Initialize form with default values
-  const form = useForm<FormValues>({
-    defaultValues: {
-      startDate: initialStartDateAndTime,
-      startTime: format(initialStartDateAndTime, "HH:mm"),
-      endDate: initialEndDateAndTime,
-      endTime: format(initialEndDateAndTime, "HH:mm"),
-      minPassengers: 1,
-      classification: filterOptions.classifications,
-      make: filterOptions.makes,
-      price: [10, filterOptions.maxHourlyRateDollars],
-    },
-  });
+  const [defaultValues] = useState<FormValues>(
+    () =>
+      getStoredValues() ?? {
+        startDate: initialStartDateAndTime,
+        startTime: format(initialStartDateAndTime, "HH:mm"),
+        endDate: initialEndDateAndTime,
+        endTime: format(initialEndDateAndTime, "HH:mm"),
+        minPassengers: 1,
+        classification: filterOptions.classifications,
+        make: filterOptions.makes,
+        price: [10, filterOptions.maxHourlyRateDollars],
+      },
+  );
+
+  const form = useForm<FormValues>({ defaultValues });
+
+  useEffect(() => {
+    const subscription = form.watch((values) => {
+      setStoredValues(values as FormValues);
+    });
+    return () => subscription.unsubscribe();
+  }, [form, setStoredValues]);
 
   const filters = (
     <ErrorBoundary

@@ -98,7 +98,21 @@ function Content() {
               <dt className="text-sm text-gray-600">Total Cost</dt>
               <dd className="text-2xl font-medium tracking-tight">
                 {formatCents(quote.totalPriceCents)}
+                {quote.discount && (
+                  <span className="ml-2 text-base text-gray-500 line-through font-normal">
+                    {formatCents(quote.originalTotalCents)}
+                  </span>
+                )}
               </dd>
+              {quote.discount && (
+                <dd className="text-sm text-green-700 font-medium mt-1">
+                  {quote.discount.kind === "holiday"
+                    ? "Holiday discount"
+                    : "Long rental discount"}
+                  {" — "}
+                  {formatCents(quote.discount.amountOffCents)} saved
+                </dd>
+              )}
             </div>
           </dl>
 

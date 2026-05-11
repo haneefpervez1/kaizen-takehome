@@ -43,3 +43,30 @@ For budget shoppers, common ceilings ("under $50", "under $100") are more useful
 
 **Options:**
 - Add 2-3 preset chips above the slider that snap the max to common values.
+
+### "Book now" button width is not uniform across list items
+**Where:** `app/components/search/VehicleListItem.tsx:56-89` (price/button column)
+
+The price block and the "Book now" button share the same flex column on the right side of each card. Because the button uses `sm:w-auto`, its width is dictated by the widest sibling — which now includes discount badges like `"$10/hr off (long rental)"` or `"17% off at checkout (holiday)"`. Cards with a discount show a wider button than cards without one, so the search results look ragged.
+
+**Options:**
+- Give the button a fixed min-width (e.g. `min-w-[8rem]`) so it stays uniform regardless of discount text.
+- Move the discount badge out of the price/button column and onto the card body (above the price block, or as a small ribbon at the top-left of the card).
+
+### Discount badge is plain green text, not a real badge
+**Where:** `app/components/search/VehicleListItem.tsx:67,84`
+
+The discount indicator is currently a bare `<p>` with `text-green-700` — visually weak and easy to miss. It reads more like a footnote than a callout, and the same treatment is used for two distinct discounts (long rental, holiday).
+
+**Options:**
+- Use the shadcn Badge component (or a small pill with bg + border + padding) so the discount actually stands out.
+- Color-code by discount kind (e.g. blue for long rental, amber for holiday) so users with multiple list items can scan at a glance.
+- Add an icon (Lucide `Tag`, `Calendar`, etc.) prefix to make the badge feel more like a real callout.
+
+### Search results don't show total cost for the selected date range
+**Where:** `app/components/search/VehicleListItem.tsx:56-60`
+
+List items show `$X/hr` only — no total for the user's selected start/end. The review page is the first time the user sees the actual cost. For long bookings (where the discount is most visible), the holiday discount specifically is a *percentage off total* — there's no clean way to express it as a /hr number, so we currently surface it as a badge ("17% off at checkout") and the user has to click through to see the dollar impact.
+
+**Options:**
+- Add a "Total: $X for Y days" line below the /hr. When a discount applies, show original total struck through next to the discounted total. This lets us drop the badge-only fallback for the holiday discount and give customers a clear pre-checkout number.

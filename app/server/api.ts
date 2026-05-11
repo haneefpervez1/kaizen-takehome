@@ -5,6 +5,7 @@ import {
   getVehicleById,
   getVehicles,
 } from "./data_helpers";
+import { getPriceBreakdown } from "./discounts";
 
 const parseAndValidateTimeRange = (startTime: string, endTime: string) => {
   const start = DateTime.fromISO(startTime);
@@ -23,20 +24,6 @@ const parseAndValidateTimeRange = (startTime: string, endTime: string) => {
     throw new Error("BAD REQUEST: end_time must be after start_time");
   }
   return { start, end };
-};
-
-const calculateTotalPrice = (
-  start: DateTime,
-  end: DateTime,
-  hourlyRateCents: number,
-) => {
-  const durationInHours = end.diff(start, "hours").hours || 0;
-
-  return {
-    totalPriceCents: hourlyRateCents * durationInHours,
-    hourlyRateCents,
-    durationInHours,
-  };
 };
 
 const validateReservationAndGetVehicle = (input: {
@@ -89,7 +76,10 @@ function searchVehicles(input: {
     });
 
     return {
-      vehicles: availableVehicles,
+      vehicles: availableVehicles.map((vehicle) => ({
+        vehicle,
+        priceBreakdown: getPriceBreakdown(start, end, vehicle.hourly_rate_cents),
+      })),
     };
   } catch (error) {
     console.error(error);
@@ -152,7 +142,7 @@ function getQuote(input: {
   endTime: string;
 }) {
   const { vehicle, start, end } = validateReservationAndGetVehicle(input);
-  return calculateTotalPrice(start, end, vehicle.hourly_rate_cents);
+  return getPriceBreakdown(start, end, vehicle.hourly_rate_cents);
 }
 
 export const API = {
