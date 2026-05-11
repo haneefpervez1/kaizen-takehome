@@ -32,4 +32,4 @@
 
 ## Bonus — UX callout
 
-The biggest issue I'd flag to a designer is the price filter itself — it's a confusing and janky control to actually use: a two-thumb slider forces users to fiddle with two pegs in close proximity, the $10 step can't represent values like "$125 max," and dragging to the right end is easily misread as a hard cap when it really means "no limit." Two plain numeric inputs — a "Min" field and a "Max" field — would be far simpler than a two-sided slider, close both Part 1 bug reports by design (users just type the number they want), and let us delete the entire "what does the slider's max mean" question.
+The biggest issue I'd flag to a designer is the price filter itself — it's a confusing and janky control to actually use: a two-thumb slider forces users to fiddle with two pegs in close proximity, and the $10 step can't represent values like "$125 max." Two plain numeric inputs — a "Min" field and a "Max" field — would be far simpler than a two-sided slider and let users type the exact budget they want.
