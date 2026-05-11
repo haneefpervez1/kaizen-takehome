@@ -11,6 +11,10 @@ This is the Kaizen Labs SWE take-home (`tps-kaizenwheels`): a vehicle reservatio
 
 The bonus prompt invites unsolicited UX improvements — note them but don't ship them unless asked.
 
+## UX nits go in `possible_ux_improvements.md`
+
+Whenever you spot a UX issue, broken interaction, confusing affordance, or other improvement candidate during normal work, **append it to `possible_ux_improvements.md`** instead of fixing it inline or just mentioning it in chat. Include the file path + line number, a one-paragraph description of what's wrong, and 1-2 options for fixing it. This file is the staging ground for the README's bonus "other improvements" prompt — don't ship the fix unless the user explicitly asks.
+
 ## Commands
 
 ```
