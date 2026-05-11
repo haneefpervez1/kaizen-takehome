@@ -20,6 +20,17 @@ export function AdditionalFilters({ filterOptions }: { filterOptions: FilterOpti
   const minPrice = price[0];
   const maxPrice = price[1];
 
+  const isAtDefaultFilters = () => {
+    const values = form.getValues();
+    return (
+      values.minPassengers === 1 &&
+      values.price[0] === 10 &&
+      values.price[1] === filterOptions.maxHourlyRateDollars &&
+      values.classification.length === filterOptions.classifications.length &&
+      values.make.length === filterOptions.makes.length
+    );
+  };
+
   return (
     <div className="flex flex-col gap-6">
       <h3 className="text-xl font-semibold">Filters</h3>
@@ -133,12 +144,7 @@ export function AdditionalFilters({ filterOptions }: { filterOptions: FilterOpti
           form.reset();
         }}
         className="mt-4"
-        disabled={
-          form.getValues().minPassengers === 1 &&
-          form.getValues().make === undefined &&
-          form.getValues().price[0] === 10 &&
-          form.getValues().price[1] === filterOptions.maxHourlyRateDollars
-        }
+        disabled={isAtDefaultFilters()}
       >
         Reset all
       </Button>

@@ -1,6 +1,6 @@
 import { formatCents } from "@/lib/formatters";
 import { Vehicle } from "@/server/data";
-import { PriceBreakdown } from "@/server/discounts";
+import { DiscountKind, PriceBreakdown } from "@/server/discounts";
 import { useBase64Image } from "@/util/useBase64Image";
 import Link from "next/link";
 import { Button } from "@/components/shared/ui/button";
@@ -57,7 +57,7 @@ export function VehicleListItem({
         </dl>
       </div>
       <div className="md:ml-auto text-center md:text-right flex flex-col justify-center mt-4 md:mt-0">
-        {priceBreakdown.discount?.kind === "long_rental" ? (
+        {priceBreakdown.discount?.kind === DiscountKind.LongRental ? (
           <>
             <p className="text-xl font-bold">
               {formatCents(priceBreakdown.discount.discountedHourlyRateCents)}
@@ -76,7 +76,7 @@ export function VehicleListItem({
               {formatCents(vehicle.hourly_rate_cents)}
               <span className="text-sm text-gray-700 font-normal ml-0.5">/hr</span>
             </p>
-            {priceBreakdown.discount?.kind === "holiday" && (
+            {priceBreakdown.discount?.kind === DiscountKind.Holiday && (
               <p className="text-xs text-green-700 font-medium mt-1">
                 17% off at checkout (holiday)
               </p>

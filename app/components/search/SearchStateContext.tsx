@@ -11,6 +11,7 @@ interface SearchStateContextValue {
 const SearchStateContext = createContext<SearchStateContextValue | null>(null);
 
 export function SearchStateProvider({ children }: { children: ReactNode }) {
+  // Ref-based so writes from form.watch don't trigger re-renders of every consumer.
   const ref = useRef<FormValues | null>(null);
 
   const value = useMemo<SearchStateContextValue>(

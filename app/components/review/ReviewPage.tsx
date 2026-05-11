@@ -6,6 +6,7 @@ import { Button } from "@/components/shared/ui/button";
 import { Separator } from "@/components/shared/ui/separator";
 import { formatCents } from "@/lib/formatters";
 import { API } from "@/server/api";
+import { DiscountKind } from "@/server/discounts";
 import { format, formatDuration, intervalToDuration } from "date-fns";
 import { useSearchParams } from "next/navigation";
 import { ErrorBoundary } from "react-error-boundary";
@@ -106,7 +107,7 @@ function Content() {
               </dd>
               {quote.discount && (
                 <dd className="text-sm text-green-700 font-medium mt-1">
-                  {quote.discount.kind === "holiday"
+                  {quote.discount.kind === DiscountKind.Holiday
                     ? "Holiday discount"
                     : "Long rental discount"}
                   {" — "}

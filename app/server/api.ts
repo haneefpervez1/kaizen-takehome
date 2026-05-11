@@ -11,10 +11,7 @@ const parseAndValidateTimeRange = (startTime: string, endTime: string) => {
   const start = DateTime.fromISO(startTime);
   const end = DateTime.fromISO(endTime);
 
-  if (
-    start.toString() === "Invalid Date" ||
-    end.toString() === "Invalid Date"
-  ) {
+  if (!start.isValid || !end.isValid) {
     throw new Error(
       "BAD REQUEST: Invalid date format. Please use ISO 8601 format.",
     );
@@ -65,6 +62,7 @@ function searchVehicles(input: {
   try {
     const { start, end } = parseAndValidateTimeRange(startTime, endTime);
 
+    // Price filter compares against the sticker rate, not the discounted rate, so changing dates doesn't silently change which cars appear.
     const availableVehicles = getAvailableVehicles({
       startTime: start,
       endTime: end,
@@ -106,6 +104,7 @@ function getFilterOptions(): FilterOptions {
   const uniquePassengerCounts = [
     ...new Set(allVehicles.map((v) => v.max_passengers)),
   ].sort((a, b) => a - b);
+  // Derived from inventory so the slider's upper bound can't go stale when prices change.
   const maxHourlyRateDollars = Math.ceil(
     Math.max(...allVehicles.map((v) => v.hourly_rate_cents)) / 100,
   );
